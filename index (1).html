@@ -1,0 +1,180 @@
+
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>10题挑战小游戏</title>
+  <style>
+    body {
+      font-family: "Arial", sans-serif;
+      text-align: center;
+      padding: 20px;
+    }
+    .question-box {
+      margin: 20px auto;
+      max-width: 500px;
+      border: 1px solid #ccc;
+      border-radius: 12px;
+      padding: 20px;
+      background-color: #f9f9f9;
+    }
+    .option {
+      display: block;
+      margin: 10px 0;
+    }
+    .hidden {
+      display: none;
+    }
+    .result {
+      font-size: 1.5em;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+    button {
+      padding: 10px 20px;
+      margin-top: 15px;
+      font-size: 1em;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🧠 每日10题挑战</h1>
+  <div id="questionBox" class="question-box">
+    <div id="questionText"></div>
+    <div id="options"></div>
+  </div>
+
+  <div id="resultSection" class="hidden">
+    <div id="resultText" class="result"></div>
+    <p id="encouragement"></p>
+    <p>📅 已打卡 <span id="streakCount">0</span> 天！</p>
+    <button onclick="restartQuiz()">重试一次</button>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        q: "Cikgu Zakiyah amat dihormati oleh pelajar-pelajarnya kerana ______ seorang yang tegas tetapi baik hati.",
+        options: ["beliau", "dia", "baginda"],
+        answer: 0
+      },
+      {
+        q: "Kita tidak boleh ______ diri kerana akan dibenci orang.",
+        options: ["mengecilkan", "menguruskan", "membesarkan"],
+        answer: 0
+      },
+      {
+        q: "Teoh __________ apabila disoal oleh Cikgu Kavita tentang perkara yang tidak diketahuinya.",
+        options: ["terpegun", "terpukau", "termengung"],
+        answer: 0
+      },
+      {
+        q: "Ibu memasak nasi __________ untuk adik kerana dia belum tumbuh gigi.",
+        options: ["lembik", "empuk", "lembut"],
+        answer: 0
+      },
+      {
+        q: "Tikar mengkuang yang __________ oleh Mak Leha sangat cantik dan kemas.",
+        options: ["ditenun", "dianyam", "diraut"],
+        answer: 1
+      },
+      {
+        q: "Para pekerja sedang giat __________ parit di kawasan perumahan itu bagi mengelakkan banjir kilat.",
+        options: ["memperdalam", "memperdalami", "pendalaman"],
+        answer: 0
+      },
+      {
+        q: "Antara peserta-peserta yang layak menyertai pertandingan itu termasuklah pengawas sekolah.",
+        options: ["Di antara peserta", "Antara peserta-peserta", "Antara peserta"],
+        answer: 2
+      },
+      {
+        q: "Gambar itu tidak boleh melekat pada dinding kerana dinding itu kesat.",
+        options: ["boleh lekat di dinding", "dapat melekat pada dinding", "boleh melekat pada dinding"],
+        answer: 2
+      },
+      {
+        q: "Beliau ialah penulis yang tersohor di negara kita.",
+        options: ["paling sohor sekali", "paling tersohor sekali", "tersosor sekali"],
+        answer: 1
+      },
+      {
+        q: "Pemandu itu membukakan pintu kereta untuk bosnya.",
+        options: ["membuka pintu kereta untuk bosnya", "dibukakan pintu kereta untuk bosnya", "membukakan pintu kereta untuk bosnya"],
+        answer: 2
+      }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+
+    function showQuestion() {
+      const q = questions[currentQuestion];
+      document.getElementById("questionText").innerText = `第 ${currentQuestion + 1} 题：${q.q}`;
+      const optionsDiv = document.getElementById("options");
+      optionsDiv.innerHTML = "";
+
+      q.options.forEach((opt, index) => {
+        const btn = document.createElement("button");
+        btn.innerText = opt;
+        btn.className = "option";
+        btn.onclick = () => checkAnswer(index);
+        optionsDiv.appendChild(btn);
+      });
+    }
+
+    function checkAnswer(selected) {
+      if (selected === questions[currentQuestion].answer) score++;
+      currentQuestion++;
+      if (currentQuestion < questions.length) {
+        showQuestion();
+      } else {
+        endQuiz();
+      }
+    }
+
+    function endQuiz() {
+      document.getElementById("questionBox").classList.add("hidden");
+      document.getElementById("resultSection").classList.remove("hidden");
+
+      const resultText = document.getElementById("resultText");
+      const encouragement = document.getElementById("encouragement");
+
+      resultText.innerText = `你得了 ${score} 分！`;
+
+      if (score >= 8) {
+        encouragement.innerText = "🎉 太棒了！你是答题小达人！继续保持打卡！";
+        incrementStreak();
+      } else {
+        encouragement.innerText = "💪 不要气馁，再试一次一定能进步！";
+      }
+
+      document.getElementById("streakCount").innerText = getStreak();
+    }
+
+    function restartQuiz() {
+      currentQuestion = 0;
+      score = 0;
+      document.getElementById("questionBox").classList.remove("hidden");
+      document.getElementById("resultSection").classList.add("hidden");
+      showQuestion();
+    }
+
+    function incrementStreak() {
+      let streak = parseInt(localStorage.getItem("quizStreak") || "0");
+      streak++;
+      localStorage.setItem("quizStreak", streak);
+    }
+
+    function getStreak() {
+      return localStorage.getItem("quizStreak") || "0";
+    }
+
+    // 初始化
+    document.getElementById("streakCount").innerText = getStreak();
+    showQuestion();
+  </script>
+
+</body>
+</html>
